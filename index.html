@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PENYIMPAN KOLEKSI GAMBAR AI | by IMAJINASILOKAL</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
+    }
+    .header-gradient {
+      background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+    }
+    .platform-card {
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .platform-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .platform-card.active {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    .gallery-item {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    .gallery-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .copy-btn, .copy-icon {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover, .copy-icon:hover {
+      transform: scale(1.1);
+      color: #4f46e5;
+    }
+    .copy-btn:active, .copy-icon:active {
+      transform: scale(0.95);
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .lora-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .lora-item input[type="text"], .lora-item input[type="number"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+    }
+    .lora-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .detail-modal {
+      animation: modalFadeIn 0.3s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .model-group {
+      margin-bottom: 1rem;
+    }
+    .model-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    .model-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      background-color: white;
+    }
+    .hidden {
+      display: none;
+    }
+    /* Custom Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #2d3748;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-20px);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+<!-- 🔐 LAYAR LOGIN / KUNCI AKSES -->
+<div id="loginScreen" class="fixed inset-0 bg-gray-900 text-white flex items-center justify-center z-50">
+  <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 text-center">
+    <h2 class="text-2xl font-bold mb-4 flex items-center justify-center gap-2">
+      <i class="fa-solid fa-lock"></i> Akses Diperlukan
+    </h2>
+    <p class="text-gray-300 mb-6">Masukkan kode akses untuk membuka aplikasi.</p>
+    <input 
+      type="password" 
+      id="accessCode" 
+      class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-4 text-center text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+      placeholder="Masukkan kode akses"
+      autocomplete="off"
+    >
+    <button 
+      onclick="verifyAccess()" 
+      class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-medium transition flex items-center justify-center gap-2">
+      <i class="fa-solid fa-right-to-bracket"></i> Masuk
+    </button>
+    <p class="text-xs text-gray-400 mt-4">
+      Kode diberikan oleh <strong>IMAJINASILOKAL</strong>
+    </p>
+  </div>
+</div>
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <header class="mb-8 text-center">
+      <div class="header-gradient text-white py-6 px-4 rounded-2xl shadow-lg mb-4">
+        <h1 class="text-3xl md:text-4xl font-bold mb-2">
+          <i class="fa-solid fa-cloud-arrow-up mr-2"></i>
+          PENYIMPAN KOLEKSI GAMBAR AI
+        </h1>
+        <p class="text-indigo-100 text-lg">by IMAJINASILOKAL</p>
+      </div>
+      <p class="text-gray-600 max-w-2xl mx-auto">
+        Simpan dan kelola koleksi gambar AI beserta prompt dan parameternya dengan mudah. 
+        Ekspor dan impor data Anda untuk berbagi atau backup.
+      </p>
+    </header>
+
+    <!-- Form Input -->
+    <div class="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
+      <div class="header-gradient p-5 text-white">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <i class="fa-solid fa-plus-circle"></i>
+          Tambah Koleksi Baru
+        </h2>
+      </div>
+      <form id="imageForm" class="p-5">
+        <!-- Bagian form tetap sama seperti kode Anda -->
+        <div class="mb-6">
+          <label class="block mb-3 font-medium text-gray-700 text-lg">
+            <i class="fa-solid fa-image mr-2"></i>
+            Unggah Gambar AI
+          </label>
+          <div class="flex items-center justify-center w-full">
+            <label for="imageInput" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 border-gray-300 hover:border-indigo-400">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-400 mb-3"></i>
+                <p class="mb-2 text-sm text-gray-500">
+                  <span class="font-semibold">Klik untuk upload</span> atau drag & drop
+                </p>
+                <p class="text-xs text-gray-500">PNG, JPG (Max. 2MB)</p>
+              </div>
+              <input id="imageInput" type="file" accept="image/*" class="hidden" required>
+            </label>
+          </div>
+          <div id="imagePreview" class="mt-3 hidden">
+            <img id="previewImg" class="max-h-64 rounded-lg shadow border mx-auto" alt="Preview Gambar">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="prompt" class="block mb-2 font-medium text-gray-700">
+              <i class="fa-solid fa-keyboard mr-2"></i>
+              Prompt
+            </label>
+            <textarea id="prompt" rows="4" class="block w-full p-4 border rounded-xl focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500" placeholder="Masukkan prompt untuk menghasilkan gambar ini..." required></textarea>
+          </div>
+          <div>
+            <label for="negativePrompt" class="block mb-2 font-medium text-gray-700">
+              <i class="fa-solid fa-ban mr-2"></i>
+              Negative Prompt
+            </label>
+            <textarea id="negativePrompt" rows="3" class="block w-full p-4 border rounded-xl focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500" placeholder="Elemen yang tidak diinginkan dalam gambar..."></textarea>
+          </div>
+        </div>
+        <div class="mb-6">
+          <label class="block mb-3 font-medium text-gray-700 text-lg">
+            <i class="fa-solid fa-cube mr-2"></i>
+            Pilih Platform
+          </label>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div>
+              <input type="radio" name="platform" id="tensor" value="tensor" class="hidden peer" checked>
+              <label for="tensor" class="platform-card flex flex-col items-center justify-center p-4 bg-white border border-gray-300 rounded-xl cursor-pointer peer-checked:border-indigo-500 peer-checked:ring-2 peer-checked:ring-indigo-200 hover:bg-gray-50">
+                <i class="fa-solid fa-robot text-3xl mb-3 text-indigo-600"></i>
+                <span class="font-medium">Tensor</span>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="platform" id="midjourney" value="midjourney" class="hidden peer">
+              <label for="midjourney" class="platform-card flex flex-col items-center justify-center p-4 bg-white border border-gray-300 rounded-xl cursor-pointer peer-checked:border-indigo-500 peer-checked:ring-2 peer-checked:ring-indigo-200 hover:bg-gray-50">
+                <i class="fa-brands fa-artstation text-3xl mb-3 text-purple-600"></i>
+                <span class="font-medium">Midjourney</span>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="platform" id="gemini" value="gemini" class="hidden peer">
+              <label for="gemini" class="platform-card flex flex-col items-center justify-center p-4 bg-white border border-gray-300 rounded-xl cursor-pointer peer-checked:border-indigo-500 peer-checked:ring-2 peer-checked:ring-indigo-200 hover:bg-gray-50">
+                <i class="fa-solid fa-gem text-3xl mb-3 text-blue-600"></i>
+                <span class="font-medium">Gemini</span>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="platform" id="piclumen" value="piclumen" class="hidden peer">
+              <label for="piclumen" class="platform-card flex flex-col items-center justify-center p-4 bg-white border border-gray-300 rounded-xl cursor-pointer peer-checked:border-indigo-500 peer-checked:ring-2 peer-checked:ring-indigo-200 hover:bg-gray-50">
+                <i class="fa-solid fa-palette text-3xl mb-3 text-green-600"></i>
+                <span class="font-medium">Piclumen</span>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="platform" id="leonardo" value="leonardo" class="hidden peer">
+              <label for="leonardo" class="platform-card flex flex-col items-center justify-center p-4 bg-white border border-gray-300 rounded-xl cursor-pointer peer-checked:border-indigo-500 peer-checked:ring-2 peer-checked:ring-indigo-200 hover:bg-gray-50">
+                <i class="fa-solid fa-paintbrush text-3xl mb-3 text-amber-600"></i>
+                <span class="font-medium">Leonardo</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div id="tensorFields">
+          <div class="bg-indigo-50 border-l-4 border-indigo-500 rounded-lg p-4 mb-6">
+            <h3 class="text-lg font-semibold mb-4 text-indigo-700 flex items-center gap-2">
+              <i class="fa-solid fa-sliders"></i>
+              Pengaturan Tensor
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label class="block mb-2 font-medium text-gray-700">Model / Checkpoint</label>
+                <select id="model" class="block w-full p-3 border rounded-lg bg-white">
+                  <option value="" disabled selected>Pilih Model</option>
+                  <optgroup label="Model Populer">
+                    <option value="Flux.1-Dev-FP8">Flux.1-Dev-FP8</option>
+                    <option value="HUBG_Realistic">HUBG_Realistic</option>
+                    <option value="SD_2.1">Stable Diffusion 2.1</option>
+                    <option value="SDXL">Stable Diffusion XL</option>
+                    <option value="PONY">PONY Diffusion</option>
+                  </optgroup>
+                  <optgroup label="Model Lainnya">
+                    <option value="Illustrious">Illustrious</option>
+                    <option value="DreamShaper">DreamShaper</option>
+                    <option value="RevAnimated">RevAnimated</option>
+                    <option value="RealisticVision">RealisticVision</option>
+                    <option value="custom">Lainnya...</option>
+                  </optgroup>
+                </select>
+                <input type="text" id="customModel" class="block w-full p-3 border rounded-lg mt-2 hidden" placeholder="Nama model custom">
+              </div>
+              <div>
+                <label class="block mb-2 font-medium text-gray-700">VAE</label>
+                <select id="vae" class="block w-full p-3 border rounded-lg bg-white">
+                  <option value="" selected>Default</option>
+                  <optgroup label="VAE Populer">
+                    <option value="vae-ft-mse-840000-ema-pruned">vae-ft-mse-840000-ema-pruned</option>
+                    <option value="orangemix.vae">orangemix.vae</option>
+                    <option value="kl-f8-anime2.vae">kl-f8-anime2.vae</option>
+                  </optgroup>
+                  <optgroup label="VAE Lainnya">
+                    <option value="anything-v4.0.vae">anything-v4.0.vae</option>
+                    <option value="wd-1-5-vae">wd-1-5-vae</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="mb-6">
+              <label class="block mb-3 font-medium text-gray-700">
+                <i class="fa-solid fa-layer-group mr-2"></i>
+                LoRA (Maksimal 6)
+              </label>
+              <div class="lora-grid">
+                <div class="lora-item"><input type="text" class="lora-name" placeholder="Nama LoRA (cth: DetailEnhancer)"><input type="number" min="0" max="2" step="0.1" value="0.8" class="lora-strength" placeholder="Strength"></div>
+                <div class="lora-item"><input type="text" class="lora-name" placeholder="Nama LoRA"><input type="number" min="0" max="2" step="0.1" value="0.0" class="lora-strength" placeholder="Strength"></div>
+                <div class="lora-item"><input type="text" class="lora-name" placeholder="Nama LoRA"><input type="number" min="0" max="2" step="0.1" value="0.0" class="lora-strength" placeholder="Strength"></div>
+                <div class="lora-item"><input type="text" class="lora-name" placeholder="Nama LoRA"><input type="number" min="0" max="2" step="0.1" value="0.0" class="lora-strength" placeholder="Strength"></div>
+                <div class="lora-item"><input type="text" class="lora-name" placeholder="Nama LoRA"><input type="number" min="0" max="2" step="0.1" value="0.0" class="lora-strength" placeholder="Strength"></div>
+                <div class="lora-item"><input type="text" class="lora-name" placeholder="Nama LoRA"><input type="number" min="0" max="2" step="0.1" value="0.0" class="lora-strength" placeholder="Strength"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div>
+                <label class="block mb-2 font-medium text-gray-700">Sampler</label>
+                <select id="sampler" class="block w-full p-3 border rounded-lg bg-white">
+                  <option value="euler">euler</option>
+                  <option value="euler_ancestral">euler_ancestral</option>
+                  <option value="heun">heun</option>
+                  <option value="heunpp2">heunpp2</option>
+                  <option value="dpm_2">dpm_2</option>
+                  <option value="dpm_2_ancestral">dpm_2_ancestral</option>
+                  <option value="lms">lms</option>
+                  <option value="dpm_fast">dpm_fast</option>
+                  <option value="dpm_adaptive">dpm_adaptive</option>
+                  <option value="dpmpp_2s_ancestral">dpmpp_2s_ancestral</option>
+                  <option value="dpmpp_sde_gpu">dpmpp_sde_gpu</option>
+                  <option value="dpmpp_2m" selected>dpmpp_2m</option>
+                  <option value="dpmpp_2m_sde_gpu">dpmpp_2m_sde_gpu</option>
+                  <option value="dpmpp_3m_sde_gpu">dpmpp_3m_sde_gpu</option>
+                  <option value="ddpm">ddpm</option>
+                  <option value="lcm">lcm</option>
+                  <option value="restart">restart</option>
+                  <option value="euler_dy">euler_dy</option>
+                  <option value="euler_smea_dy">euler_smea_dy</option>
+                  <option value="ddim">ddim</option>
+                  <option value="uni_pc">uni_pc</option>
+                  <option value="uni_pc_bh2">uni_pc_bh2</option>
+                  <option value="sde_multistep">sde_multistep</option>
+                </select>
+              </div>
+              <div>
+                <label class="block mb-2 font-medium text-gray-700">Scheduler</label>
+                <select id="scheduler" class="block w-full p-3 border rounded-lg bg-white">
+                  <option value="normal" selected>normal</option>
+                  <option value="karras">karras</option>
+                  <option value="sgm_uniform">sgm_uniform</option>
+                  <option value="exponential">exponential</option>
+                  <option value="simple">simple</option>
+                  <option value="ddim_uniform">ddim_uniform</option>
+                  <option value="beta">beta</option>
+                  <option value="linear quadratic">linear quadratic</option>
+                </select>
+              </div>
+              <div>
+                <label class="block mb-2 font-medium text-gray-700">Guidance Scale</label>
+                <input type="number" id="cfg" min="0" max="20" step="0.1" value="3.5" class="block w-full p-3 border rounded-lg" placeholder="cth: 3.5">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div>
+                <label class="block mb-2 font-medium text-gray-700">Steps</label>
+                <input type="number" id="steps" min="1" max="150" value="30" class="block w-full p-3 border rounded-lg" placeholder="cth: 30">
+              </div>
+              <div>
+                <label class="block mb-2 font-medium text-gray-700">Seed</label>
+                <input type="number" id="seed" class="block w-full p-3 border rounded-lg" placeholder="Seed value (acak jika kosong)">
+              </div>
+              <div class="flex items-center">
+                <input type="checkbox" id="upscaler" class="w-5 h-5 text-indigo-600 rounded">
+                <label for="upscaler" class="ml-2 font-medium text-gray-700">Gunakan Upscaler</label>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <input type="checkbox" id="adetailer" class="w-5 h-5 text-indigo-600 rounded" checked>
+              <label for="adetailer" class="ml-2 font-medium text-gray-700">Gunakan ADetailer</label>
+            </div>
+          </div>
+        </div>
+        <div id="altModelFields" class="hidden">
+          <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6">
+            <h3 class="text-lg font-semibold mb-4 text-blue-700 flex items-center gap-2">
+              <i class="fa-solid fa-gear"></i>
+              Pengaturan Model
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div id="midjourneyModels" class="hidden model-group"><label class="block mb-2 font-medium text-gray-700">Model Midjourney</label><select id="midjourneyModel" class="block w-full p-3 border rounded-lg bg-white"><option value="V7" selected>V7 (default)</option><option value="V6">V6</option><option value="V5.2">V5.2</option><option value="V5.1">V5.1</option><option value="V5">V5</option><option value="V4">V4</option><option value="V3">V3</option><option value="V2">V2</option><option value="V1">V1</option><option value="Niji V5">Niji V5</option><option value="Niji V4">Niji V4</option></select></div>
+              <div id="piclumenModels" class="hidden model-group"><label class="block mb-2 font-medium text-gray-700">Model Piclumen</label><select id="piclumenModel" class="block w-full p-3 border rounded-lg bg-white"><option value="PicLumen Art V1">PicLumen Art V1</option><option value="PicLumen Realistic V2" selected>PicLumen Realistic V2</option><option value="PicLumen Anime V2">PicLumen Anime V2</option><option value="PicLumen Lineart V1">PicLumen Lineart V1</option><option value="Namiya">Namiya</option><option value="FLUX.1 Kontext">FLUX.1 Kontext</option><option value="Primo">Primo</option><option value="Pony Diffusion V6">Pony Diffusion V6</option><option value="FLUX.1-schnell">FLUX.1-schnell</option><option value="FLUX.1-dev">FLUX.1-dev</option></select></div>
+              <div id="dreaminaModels" class="hidden model-group"><label class="block mb-2 font-medium text-gray-700">Model Dreamina</label><select id="dreaminaModel" class="block w-full p-3 border rounded-lg bg-white"><option value="Gambar 3.1" selected>Gambar 3.1</option><option value="Gambar 3.0">Gambar 3.0</option><option value="Gambar 2.1">Gambar 2.1</option><option value="Gambar 2.0 Pro">Gambar 2.0 Pro</option><option value="Gambar 1.4">Gambar 1.4</option></select></div>
+              <div id="leonardoModels" class="hidden model-group"><label class="block mb-2 font-medium text-gray-700">Model Leonardo</label><select id="leonardoModel" class="block w-full p-3 border rounded-lg bg-white"><optgroup label="Preset Model Styles"><option value="Cinematic Kino">Cinematic Kino</option><option value="Concept Art">Concept Art</option><option value="Graphic Design">Graphic Design</option><option value="Illustrative Albedo">Illustrative Albedo</option><option value="Leonardo Lightning">Leonardo Lightning</option><option value="Lifelike Vision">Lifelike Vision</option><option value="Portrait Perfect">Portrait Perfect</option><option value="Stock Photography">Stock Photography</option></optgroup><optgroup label="Featured Models"><option value="Lucid Realism">Lucid Realism</option><option value="GPT-Image-1">GPT-Image-1</option><option value="FLUX.1 Kontext">FLUX.1 Kontext</option><option value="Phoenix 1.0">Phoenix 1.0</option><option value="Flux Dev">Flux Dev</option><option value="Flux Schnell">Flux Schnell</option><option value="Phoenix 0.9">Phoenix 0.9</option><option value="Anime">Anime</option></optgroup></select></div>
+              <div id="geminiModels" class="hidden model-group"><label class="block mb-2 font-medium text-gray-700">Model Gemini</label><select id="geminiModel" class="block w-full p-3 border rounded-lg bg-white"><option value="Gemini 2.5 Flash">Gemini 2.5 Flash</option><option value="Gemini 2.5 Pro" selected>Gemini 2.5 Pro</option><option value="Custom Gem">Custom Gem</option></select></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold mb-4 text-indigo-700 flex items-center gap-2">
+            <i class="fa-solid fa-tags"></i>
+            Metadata
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="tags" class="block mb-2 font-medium text-gray-700">Tags</label>
+              <input type="text" id="tags" class="block w-full p-3 border rounded-lg" placeholder="Pisahkan dengan koma (cth: potret, seni digital, wanita)">
+            </div>
+            <div>
+              <label for="notes" class="block mb-2 font-medium text-gray-700">Catatan</label>
+              <textarea id="notes" rows="3" class="block w-full p-3 border rounded-lg" placeholder="Catatan tambahan tentang prompt atau gambar..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-save"></i>
+            Simpan Koleksi
+          </button>
+          <button type="button" id="exportBtn" class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-file-export"></i>
+            Export JSON
+          </button>
+          <input type="file" id="importInput" accept="application/json" class="hidden">
+          <button type="button" id="importBtn" class="px-6 py-3 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700 flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-file-import"></i>
+            Import JSON
+          </button>
+          <button type="button" id="resetFormBtn" class="px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-undo"></i>
+            Reset Form
+          </button>
+          <button type="button" id="clearBtn" class="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 flex items-center gap-2 font-medium">
+            <i class="fa-solid fa-trash"></i>
+            Hapus Semua
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Gallery Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+      <h2 class="text-2xl font-bold flex items-center gap-2">
+        <i class="fa-solid fa-images text-indigo-600"></i>
+        Galeri Koleksi
+      </h2>
+      <div class="flex gap-3">
+        <div class="relative">
+          <input type="text" id="searchInput" placeholder="Cari prompt atau tag..." class="pl-10 pr-4 py-2 border rounded-lg w-full md:w-64">
+          <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+        <select id="platformFilter" class="border rounded-lg px-3 py-2">
+          <option value="">Semua Platform</option>
+          <option value="tensor">Tensor</option>
+          <option value="midjourney">Midjourney</option>
+          <option value="gemini">Gemini</option>
+          <option value="piclumen">Piclumen</option>
+          <option value="leonardo">Leonardo</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Gallery -->
+    <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <!-- Konten galeri akan diisi oleh JavaScript -->
+    </div>
+    <div id="emptyGallery" class="text-center py-16 text-gray-500 hidden">
+        <i class="fa-solid fa-ghost text-5xl mb-4"></i>
+        <p class="text-xl">Galeri masih kosong.</p>
+        <p>Tambahkan koleksi baru untuk memulai.</p>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-lg max-w-4xl w-full max-h-[90vh] overflow-auto detail-modal">
+      <div class="header-gradient text-white p-5 flex justify-between items-center sticky top-0 z-10">
+        <h3 class="text-xl font-bold">Detail Koleksi</h3>
+        <button onclick="closeDetailModal()" class="text-white hover:text-gray-200">
+          <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="flex flex-col lg:flex-row gap-8">
+          <!-- Image Column -->
+          <div class="lg:w-2/5">
+            <img id="detailImage" src="" class="rounded-xl shadow-lg border w-full">
+            <div class="mt-4 flex flex-wrap gap-2">
+                <button id="deleteItemBtn" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash"></i> Hapus
+                </button>
+            </div>
+          </div>
+          <!-- Info Column -->
+          <div class="lg:w-3/5">
+            <div class="space-y-4">
+              <!-- Tombol Salin -->
+              <div class="bg-gray-50 rounded-xl p-4">
+                <h4 class="font-semibold text-lg mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-copy"></i>
+                  Salin Data
+                </h4>
+                <div class="space-y-2">
+                  <button onclick="copyElementText('detailPrompt')" class="copy-btn w-full text-left px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg flex items-center justify-between">
+                    <span>Salin Prompt</span><i class="fa-solid fa-copy"></i>
+                  </button>
+                  <button onclick="copyElementText('detailNegativePrompt')" class="copy-btn w-full text-left px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg flex items-center justify-between">
+                    <span>Salin Negative Prompt</span><i class="fa-solid fa-copy"></i>
+                  </button>
+                  <button onclick="copyAllParameters()" class="copy-btn w-full text-left px-3 py-2 bg-indigo-200 hover:bg-indigo-300 rounded-lg flex items-center justify-between font-semibold text-indigo-800">
+                    <span>Salin Semua Parameter</span><i class="fa-solid fa-paste"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Detail -->
+              <div>
+                <h4 class="font-semibold text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-comment"></i>Prompt</h4>
+                <p id="detailPrompt" class="text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg break-words"></p>
+              </div>
+              <div>
+                <h4 class="font-semibold text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-ban"></i>Negative Prompt</h4>
+                <p id="detailNegativePrompt" class="text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg break-words"></p>
+              </div>
+              
+              <!-- Parameter -->
+              <div id="detailParametersSection" class="bg-gray-50 rounded-lg p-4">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-semibold text-lg flex items-center gap-2"><i class="fa-solid fa-info-circle"></i>Parameter</h4>
+                </div>
+                <div class="mt-3 space-y-2 text-sm">
+                    <div class="flex justify-between items-center"><span><strong>Platform:</strong> <span id="detailPlatform" class="font-normal capitalize"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailPlatform')"></i></div>
+                    <div class="flex justify-between items-center"><span><strong>Model:</strong> <span id="detailModel" class="font-normal"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailModel')"></i></div>
+                    
+                    <div id="detailTensorParams" class="space-y-2">
+                        <div class="flex justify-between items-center"><span><strong>VAE:</strong> <span id="detailVae" class="font-normal"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailVae')"></i></div>
+                        <div class="flex justify-between items-center"><span><strong>Sampler:</strong> <span id="detailSampler" class="font-normal"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailSampler')"></i></div>
+                        <div class="flex justify-between items-center"><span><strong>Scheduler:</strong> <span id="detailScheduler" class="font-normal"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailScheduler')"></i></div>
+                        <div class="flex justify-between items-center"><span><strong>Steps:</strong> <span id="detailSteps" class="font-normal"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailSteps')"></i></div>
+                        <div class="flex justify-between items-center"><span><strong>CFG Scale:</strong> <span id="detailCfg" class="font-normal"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailCfg')"></i></div>
+                        <div class="flex justify-between items-center"><span><strong>Seed:</strong> <span id="detailSeed" class="font-normal"></span></span><i class="fa-solid fa-copy copy-icon" onclick="copyElementText('detailSeed')"></i></div>
+                        <div class="mt-2">
+                            <strong>LoRA:</strong>
+                            <div id="detailLora" class="space-y-1 mt-1"></div>
+                        </div>
+                        <div class="mt-2 flex gap-2">
+                            <span id="detailUpscaler" class="badge bg-yellow-100 text-yellow-800 hidden">Upscaler</span>
+                            <span id="detailAdetailer" class="badge bg-yellow-100 text-yellow-800 hidden">ADetailer</span>
+                        </div>
+                    </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 class="font-semibold text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-tags"></i>Tags</h4>
+                <div id="detailTags" class="flex flex-wrap gap-2"></div>
+                <span id="detailTagsText" class="hidden"></span>
+              </div>
+              <div>
+                <h4 class="font-semibold text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-sticky-note"></i>Catatan</h4>
+                <p id="detailNotes" class="text-gray-700 bg-gray-50 p-3 rounded-lg min-h-16 break-words"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Pesan notifikasi</div>
+
+  <script>
+    // ===================================================================================
+    // VARIABEL GLOBAL DAN ELEMEN DOM
+    // ===================================================================================
+    // 🔑 DAFTAR KODE AKSES YANG VALID (5 password berbeda)
+const VALID_PASSWORDS = [
+  "Simpansaja123",   // Ganti dengan kode Anda
+  "Simpantanparagu",   // Bisa beri unik per pelanggan
+  "lokalsimpan123",
+  "KodeMasuk-999",
+  "Akseslokal2025"
+];
+
+// 🔓 Fungsi verifikasi password
+function verifyAccess() {
+  const input = document.getElementById('accessCode');
+  const code = input.value.trim();
+
+  if (VALID_PASSWORDS.includes(code)) {
+    localStorage.setItem('aiAppAuthenticated', 'true');
+    document.getElementById('loginScreen').remove();
+    showToast("Akses diberikan. Selamat menggunakan!");
+  } else {
+    input.classList.add('border-red-500', 'bg-red-900/30');
+    setTimeout(() => {
+      input.classList.remove('border-red-500', 'bg-red-900/30');
+    }, 1000);
+    showToast("Kode salah! Hubungi IMAJINASILOKAL.");
+  }
+}
+    let collections = [];
+    let currentDetailIndex = -1;
+
+    const gallery = document.getElementById('gallery');
+    const emptyGallery = document.getElementById('emptyGallery');
+    const imageForm = document.getElementById('imageForm');
+    const imageInput = document.getElementById('imageInput');
+    const previewImg = document.getElementById('previewImg');
+    const imagePreview = document.getElementById('imagePreview');
+    const detailModal = document.getElementById('detailModal');
+    const searchInput = document.getElementById('searchInput');
+    const platformFilter = document.getElementById('platformFilter');
+
+    // ===================================================================================
+    // FUNGSI UTAMA (PENYIMPANAN, RENDER, DLL)
+    // ===================================================================================
+
+    // Fungsi untuk menyimpan koleksi ke localStorage
+    const saveCollections = () => {
+      localStorage.setItem('aiCollections', JSON.stringify(collections));
+    };
+
+    // Fungsi untuk memuat koleksi dari localStorage
+    const loadCollections = () => {
+      const savedCollections = localStorage.getItem('aiCollections');
+      if (savedCollections) {
+        collections = JSON.parse(savedCollections);
+      }
+    };
+
+    // Fungsi untuk menampilkan koleksi di galeri
+    const renderGallery = (filteredCollections = collections) => {
+      gallery.innerHTML = '';
+      if (filteredCollections.length === 0) {
+        emptyGallery.classList.remove('hidden');
+        gallery.classList.add('hidden');
+        return;
+      }
+      
+      emptyGallery.classList.add('hidden');
+      gallery.classList.remove('hidden');
+
+      filteredCollections.forEach((item, index) => {
+        const originalIndex = collections.indexOf(item);
+        const tagsHtml = item.tags.split(',').map(tag => tag.trim() ? `<span class="badge bg-indigo-100 text-indigo-800">${tag.trim()}</span>` : '').join('');
+        
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item bg-white rounded-xl overflow-hidden border border-gray-200 flex flex-col';
+        galleryItem.innerHTML = `
+          <div class="relative">
+            <img src="${item.imageData}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/500x500/e2e8f0/e2e8f0?text=X';">
+            <div class="absolute top-2 right-2">
+              <span class="badge bg-indigo-100 text-indigo-800 capitalize">${item.platform}</span>
+            </div>
+          </div>
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="font-semibold mb-1 truncate">${item.model || 'N/A'}</h3>
+            <p class="text-sm text-gray-600 mb-3 flex-grow">${item.prompt.substring(0, 50)}${item.prompt.length > 50 ? '...' : ''}</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              ${tagsHtml}
+            </div>
+            <button onclick="showDetail(${originalIndex})" class="w-full mt-auto py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+              Lihat Detail
+            </button>
+          </div>
+        `;
+        gallery.appendChild(galleryItem);
+      });
+    };
+
+    // Fungsi untuk menampilkan notifikasi (toast)
+    const showToast = (message) => {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    };
+
+    // ===================================================================================
+    // EVENT LISTENER UNTUK FORM DAN INTERAKSI
+    // ===================================================================================
+
+    // Handle pratinjau gambar saat dipilih
+    imageInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          imagePreview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Handle pergantian platform untuk menampilkan field yang sesuai
+    document.querySelectorAll('input[name="platform"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        const isTensor = this.value === 'tensor';
+        document.getElementById('tensorFields').classList.toggle('hidden', !isTensor);
+        document.getElementById('altModelFields').classList.toggle('hidden', isTensor);
+        
+        if (!isTensor) {
+          ['midjourney', 'piclumen', 'gemini', 'leonardo'].forEach(p => {
+            const el = document.getElementById(`${p}Models`);
+            if (el) el.classList.toggle('hidden', this.value !== p);
+          });
+        }
+      });
+    });
+
+    // Handle input model custom
+    document.getElementById('model').addEventListener('change', function() {
+      document.getElementById('customModel').classList.toggle('hidden', this.value !== 'custom');
+    });
+
+    // Handle submit form untuk menyimpan koleksi baru
+    imageForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const imageFile = imageInput.files[0];
+      if (!imageFile) {
+        showToast('Silakan pilih gambar terlebih dahulu!');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imageData = e.target.result;
+        const platform = document.querySelector('input[name="platform"]:checked').value;
+        let model = '';
+
+        if (platform === 'tensor') {
+            model = document.getElementById('model').value === 'custom' 
+                ? document.getElementById('customModel').value 
+                : document.getElementById('model').value;
+        } else {
+            const modelSelect = document.getElementById(`${platform}Model`);
+            if (modelSelect) model = modelSelect.value;
+        }
+        
+        const newCollection = {
+          id: Date.now(),
+          imageData,
+          platform,
+          model,
+          prompt: document.getElementById('prompt').value,
+          negativePrompt: document.getElementById('negativePrompt').value,
+          tags: document.getElementById('tags').value,
+          notes: document.getElementById('notes').value,
+          tensorData: platform === 'tensor' ? {
+            vae: document.getElementById('vae').value,
+            sampler: document.getElementById('sampler').value,
+            scheduler: document.getElementById('scheduler').value,
+            cfg: document.getElementById('cfg').value,
+            steps: document.getElementById('steps').value,
+            seed: document.getElementById('seed').value || 'acak',
+            upscaler: document.getElementById('upscaler').checked,
+            adetailer: document.getElementById('adetailer').checked,
+            lora: Array.from(document.querySelectorAll('.lora-item')).map(item => {
+              const name = item.querySelector('.lora-name').value.trim();
+              const strength = item.querySelector('.lora-strength').value;
+              return name ? { name, strength } : null;
+            }).filter(Boolean)
+          } : {}
+        };
+
+        collections.unshift(newCollection); // Tambah ke awal array
+        saveCollections();
+        renderGallery();
+        resetForm(); // Reset form setelah berhasil menyimpan
+        showToast('Koleksi berhasil disimpan!');
+      };
+      reader.readAsDataURL(imageFile);
+    });
+
+    // Fungsi untuk mereset form
+    const resetForm = () => {
+        imageForm.reset();
+        imagePreview.classList.add('hidden');
+        imageInput.value = '';
+        document.querySelector('input[name="platform"]:checked').dispatchEvent(new Event('change'));
+    };
+
+    // Handle tombol Reset Form
+    document.getElementById('resetFormBtn').addEventListener('click', () => {
+        resetForm();
+        showToast('Form telah di-reset.');
+    });
+
+    // Handle tombol Ekspor JSON
+    document.getElementById('exportBtn').addEventListener('click', function() {
+      if (collections.length === 0) {
+        showToast('Tidak ada data untuk diekspor.');
+        return;
+      }
+      const dataStr = JSON.stringify(collections, null, 2);
+      const dataBlob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `koleksi-ai-${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast('Data berhasil diekspor!');
+    });
+
+    // Handle tombol Impor JSON
+    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importInput').click());
+    document.getElementById('importInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const importedData = JSON.parse(e.target.result);
+            if (Array.isArray(importedData)) {
+              const existingIds = new Set(collections.map(c => c.id));
+              const newData = importedData.filter(item => !existingIds.has(item.id));
+              collections = [...newData, ...collections];
+              saveCollections();
+              renderGallery();
+              showToast(`${newData.length} koleksi baru berhasil diimpor!`);
+            } else {
+              throw new Error("Format tidak valid");
+            }
+          } catch (error) {
+            showToast('Gagal impor. Pastikan file JSON valid.');
+          }
+        }
+        reader.readAsText(file);
+        this.value = ''; // Reset input file
+      }
+    });
+
+    // Handle tombol Hapus Semua
+    document.getElementById('clearBtn').addEventListener('click', function() {
+        if (confirm('Apakah Anda yakin ingin menghapus SEMUA koleksi? Tindakan ini tidak dapat dibatalkan.')) {
+            collections = [];
+            saveCollections();
+            renderGallery();
+            showToast('Semua koleksi telah dihapus.');
+        }
+    });
+
+    // ===================================================================================
+    // FUNGSI MODAL DETAIL
+    // ===================================================================================
+    
+    const showDetail = (index) => {
+      currentDetailIndex = index;
+      const item = collections[index];
+      if (!item) return;
+
+      document.getElementById('detailImage').src = item.imageData;
+      document.getElementById('detailPrompt').textContent = item.prompt || '-';
+      document.getElementById('detailNegativePrompt').textContent = item.negativePrompt || '-';
+      document.getElementById('detailNotes').textContent = item.notes || '-';
+      
+      document.getElementById('detailPlatform').textContent = item.platform;
+      document.getElementById('detailModel').textContent = item.model || 'N/A';
+      
+      const tagsContainer = document.getElementById('detailTags');
+      tagsContainer.innerHTML = item.tags.split(',').map(tag => tag.trim() ? `<span class="badge bg-indigo-100 text-indigo-800">${tag.trim()}</span>` : '').join('');
+      
+      const tensorParamsContainer = document.getElementById('detailTensorParams');
+      if (item.platform === 'tensor' && item.tensorData) {
+        tensorParamsContainer.classList.remove('hidden');
+        const { tensorData } = item;
+        document.getElementById('detailSteps').textContent = tensorData.steps || '-';
+        document.getElementById('detailCfg').textContent = tensorData.cfg || '-';
+        document.getElementById('detailSampler').textContent = tensorData.sampler || '-';
+        document.getElementById('detailScheduler').textContent = tensorData.scheduler || '-';
+        document.getElementById('detailSeed').textContent = tensorData.seed || '-';
+        document.getElementById('detailVae').textContent = tensorData.vae || 'Default';
+        
+        const loraContainer = document.getElementById('detailLora');
+        loraContainer.innerHTML = tensorData.lora?.map((l, i) => 
+            `<div class="flex justify-between items-center">
+               <span id="loraValue-${i}">${l.name}: ${l.strength}</span>
+               <i class="fa-solid fa-copy copy-icon" onclick="copyElementText('loraValue-${i}')"></i>
+             </div>`
+        ).join('') || '<span class="text-gray-500">Tidak ada</span>';
+        
+        document.getElementById('detailUpscaler').classList.toggle('hidden', !tensorData.upscaler);
+        document.getElementById('detailAdetailer').classList.toggle('hidden', !tensorData.adetailer);
+      } else {
+        tensorParamsContainer.classList.add('hidden');
+      }
+
+      detailModal.classList.remove('hidden');
+    };
+
+    const closeDetailModal = () => {
+      detailModal.classList.add('hidden');
+      currentDetailIndex = -1;
+    };
+    
+    document.getElementById('deleteItemBtn').addEventListener('click', function() {
+        if (currentDetailIndex > -1 && confirm('Anda yakin ingin menghapus item ini?')) {
+            collections.splice(currentDetailIndex, 1);
+            saveCollections();
+            renderGallery();
+            closeDetailModal();
+            showToast('Item berhasil dihapus.');
+        }
+    });
+
+    // ===================================================================================
+    // FUNGSI BANTUAN (COPY, FILTER)
+    // ===================================================================================
+    
+    // Fungsi Salin Teks Universal yang Lebih Andal
+    const copyTextToClipboard = (text) => {
+        if (!text || typeof text !== 'string') {
+            showToast('Tidak ada teks untuk disalin.');
+            return;
+        }
+        
+        // Metode modern: Navigator Clipboard API
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Teks berhasil disalin!');
+            }).catch(err => {
+                console.error('Gagal menggunakan navigator.clipboard:', err);
+                fallbackCopy(text); // Coba metode fallback jika gagal
+            });
+        } else {
+            fallbackCopy(text); // Langsung gunakan metode fallback
+        }
+    };
+
+    const fallbackCopy = (text) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.top = "-9999px";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showToast('Teks berhasil disalin!');
+            } else {
+                showToast('Gagal menyalin teks.');
+            }
+        } catch (err) {
+            console.error('Gagal menggunakan execCommand:', err);
+            showToast('Gagal menyalin teks.');
+        }
+        document.body.removeChild(textArea);
+    };
+    
+    // Fungsi pembantu untuk menyalin teks dari sebuah elemen berdasarkan ID-nya
+    const copyElementText = (elementId) => {
+        const element = document.getElementById(elementId);
+        if (element && element.textContent) {
+            copyTextToClipboard(element.textContent);
+        } else {
+            showToast('Tidak ada teks untuk disalin.');
+        }
+    };
+
+    // Fungsi untuk menyalin semua parameter dalam format yang rapi
+    const copyAllParameters = () => {
+        if (currentDetailIndex < 0) return;
+        const item = collections[currentDetailIndex];
+        let textToCopy = `Prompt: ${item.prompt}\n\n`;
+        textToCopy += `Negative Prompt: ${item.negativePrompt}\n\n`;
+        textToCopy += `---\n`;
+        textToCopy += `Platform: ${item.platform}\n`;
+        textToCopy += `Model: ${item.model}\n`;
+
+        if (item.platform === 'tensor' && item.tensorData) {
+            const td = item.tensorData;
+            textToCopy += `VAE: ${td.vae || 'Default'}\n`;
+            textToCopy += `Sampler: ${td.sampler}\n`;
+            textToCopy += `Scheduler: ${td.scheduler}\n`;
+            textToCopy += `Steps: ${td.steps}\n`;
+            textToCopy += `CFG Scale: ${td.cfg}\n`;
+            textToCopy += `Seed: ${td.seed}\n`;
+            if (td.lora && td.lora.length > 0) {
+                textToCopy += `LoRA: ${td.lora.map(l => `${l.name}: ${l.strength}`).join(', ')}\n`;
+            }
+            if (td.upscaler) textToCopy += `Upscaler: Ya\n`;
+            if (td.adetailer) textToCopy += `ADetailer: Ya\n`;
+        }
+        textToCopy += `---\n`;
+        if(item.tags) textToCopy += `Tags: ${item.tags}\n`;
+        if(item.notes) textToCopy += `Notes: ${item.notes}\n`;
+
+        copyTextToClipboard(textToCopy.trim());
+    }
+
+    // Fungsi untuk menerapkan filter pencarian dan platform
+    const applyFilters = () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedPlatform = platformFilter.value;
+
+        const filtered = collections.filter(item => {
+            const matchesSearch = searchTerm === '' ||
+                item.prompt.toLowerCase().includes(searchTerm) ||
+                item.tags.toLowerCase().includes(searchTerm) ||
+                item.model.toLowerCase().includes(searchTerm);
+            
+            const matchesPlatform = selectedPlatform === '' || item.platform === selectedPlatform;
+
+            return matchesSearch && matchesPlatform;
+        });
+        renderGallery(filtered);
+    };
+
+    searchInput.addEventListener('input', applyFilters);
+    platformFilter.addEventListener('change', applyFilters);
+
+    // ===================================================================================
+    // INISIALISASI APLIKASI
+    // ===================================================================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+  // Cek apakah pengguna sudah pernah login
+  const isAuthenticated = localStorage.getItem('aiAppAuthenticated') === 'true';
+
+  if (isAuthenticated) {
+    // Langsung muat aplikasi
+    loadCollections();
+    renderGallery();
+    document.querySelector('input[name="platform"]:checked').dispatchEvent(new Event('change'));
+  } else {
+    // Tampilkan layar login (tidak perlu aksi, sudah muncul)
+  }
+});
+  </script>
+    <script>
+(function() {
+  const threshold = 160;
+  let devtoolsOpen = false;
+
+  const detectDevTools = () => {
+    const widthDiff = window.outerWidth - window.innerWidth > threshold;
+    const heightDiff = window.outerHeight - window.innerHeight > threshold;
+
+    if (widthDiff || heightDiff) {
+      if (!devtoolsOpen) {
+        devtoolsOpen = true;
+        alert("Akses developer tools terdeteksi! Halaman akan dikunci.");
+        document.body.innerHTML = "<h1 style='text-align:center;margin-top:100px;'>Akses dibatasi oleh sistem keamanan.</h1>";
+      }
+    } else {
+      devtoolsOpen = false;
+    }
+  };
+
+  setInterval(detectDevTools, 1000);
+})();
+</script>
+
+</body>
+</html>
